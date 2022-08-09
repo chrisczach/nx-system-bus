@@ -95,6 +95,16 @@ const connect = (e: Event) => {
         logMessage('Single User Update')
         logMessage(update)
     })
+
+    systemBusManager.stateReducer.getResourceStatusUpdates().subscribe(update => {
+        logMessage('All Resource Status Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getResourceStatusUpdates(['{28211a91-4d61-e6b9-da49-172c127da68b}']).subscribe(update => {
+        logMessage('Single Resource Status Update')
+        logMessage(update)
+    })
 }
 
 document.querySelector('button#connect')?.addEventListener('click', connect)
