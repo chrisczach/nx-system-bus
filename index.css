@@ -1,0 +1,58 @@
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 40px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+h2 {
+    margin: 40px 0 0 0;
+}
+
+input {
+    margin-left: 8px;
+    margin-right: 16px;
+    flex-grow: 1;
+    flex-basis: 1fr;
+}
+
+form {
+    display: flex;
+    justify-content: stretch;
+    align-items: stretch;
+    width: 100%;
+}
+
+pre {
+    background: #343434;
+    color: white;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    overflow-y: scroll;
+}
+
+strong {
+    color: lightgreen;
+}
+
+span.new {
+    animation: FadeIn 3s ease-in-out forwards;
+}
+
+@keyframes FadeIn {
+    from {
+      background-color: darkgreen;
+    }
+
+    to {
+      background-color: transparent;
+    }
+  }

@@ -1,48 +1,100 @@
 import { NxSystemBusManager } from '../lib/main';
+import { StateResult } from '../lib/types';
 
-const systemBusManager = new NxSystemBusManager(false, '552bac15-8c6a-40da-a46e-da321962dcca.relay.relay.cloud.hdw.mx', 'ZTBlNjJlYWQwNGZkNDMyNzg5ZDk0MzQ1MjA0MjM3YzctMjUyMDg1NTQ4NjpvcXhZdkdYNkk3NHZuRWN5ZGhBVEN4Wm5iZjFrNkk9aHpib2JoOjAxMzE0ODlmYjVhOTMyMWE0OTgzNTlmNTkxYzJjMjNj')
+let systemBusManager: NxSystemBusManager;
 
-systemBusManager.stateReducer.getAllUpdates().subscribe(update =>{
-    console.info('All System Update')
-    console.log(update)
-})
+const logMessage = (message: string | Partial<StateResult>) => {
+    console.info(message)
 
-systemBusManager.stateReducer.getCameraUpdates().subscribe(update =>{
-    console.info('All Camera Update')
-    console.log(update)
-})
+    const messages = document.querySelector<HTMLPreElement>('pre');
 
-systemBusManager.stateReducer.getCameraUpdates(["{28211a91-4d61-e6b9-da49-172c127da68b}"]).subscribe(update => {
-    console.info('Single Camera Update')
-    console.log(update)
-})
+    if (typeof message !== 'string') {
+        const state = 'View browser developer console to see logged state'
+        message = JSON.stringify({ ...message, state }, null, 4);
+    } else {
+        message = `<strong>${message}<strong>`
+    }
 
-systemBusManager.stateReducer.getServerUpdates().subscribe(update =>{
-    console.info('All Server Update')
-    console.log(update)
-})
+    if (messages) {
+        const newSpan = document.createElement('span');
+        newSpan.classList.add('new')
+        newSpan.innerHTML = `\n${message}\n`
+        messages.appendChild(newSpan)
+        if (messages !== document.activeElement) {
+            messages.scrollTo(0, messages.scrollHeight)
+        }
+    }
+}
 
-systemBusManager.stateReducer.getServerUpdates(["{a29fc3f4-0de6-0ed6-be0a-a55bc0ea5393}"]).subscribe(update => {
-    console.info('Single Server Update')
-    console.log(update)
-})
+const connect = (e: Event) => {
+    e.preventDefault()
 
-systemBusManager.stateReducer.getStorageUpdates().subscribe(update =>{
-    console.info('All Storage Update')
-    console.log(update)
-})
+    if (systemBusManager) {
+        logMessage('Canceling existing system bus connection')
+        systemBusManager.disconnect();
+    }
 
-systemBusManager.stateReducer.getStorageUpdates(["{3d642d7f-e54c-5cad-886e-639421d2d950}"]).subscribe(update => {
-    console.info('Single Storage Update')
-    console.log(update)
-})
+    const messages = document.querySelector<HTMLPreElement>('pre');
 
-systemBusManager.stateReducer.getUserUpdates().subscribe(update =>{
-    console.info('All User Update')
-    console.log(update)
-})
+    if (messages) {
+        messages.innerHTML = '';
+    }
 
-systemBusManager.stateReducer.getUserUpdates(["{329a88b1-df06-2871-5cde-15a50be17743}"]).subscribe(update => {
-    console.info('Single User Update')
-    console.log(update)
-})
+    const serverUrl = document.querySelector<HTMLInputElement>('#url')?.value || '';
+    const auth = document.querySelector<HTMLInputElement>('#auth')?.value || '';
+
+    logMessage(`Initializing system bus connection for system "${serverUrl}"`)
+
+    if (!auth || !serverUrl) {
+        alert('Please make sure to enter both the url and auth to run demo')
+    }
+
+    systemBusManager = new NxSystemBusManager(false, serverUrl, auth)
+
+    systemBusManager.stateReducer.getAllUpdates().subscribe(update => {
+        logMessage('All System Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getCameraUpdates().subscribe(update => {
+        logMessage('All Camera Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getCameraUpdates(["{28211a91-4d61-e6b9-da49-172c127da68b}"]).subscribe(update => {
+        logMessage('Single Camera Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getServerUpdates().subscribe(update => {
+        logMessage('All Server Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getServerUpdates(["{a29fc3f4-0de6-0ed6-be0a-a55bc0ea5393}"]).subscribe(update => {
+        logMessage('Single Server Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getStorageUpdates().subscribe(update => {
+        logMessage('All Storage Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getStorageUpdates(["{3d642d7f-e54c-5cad-886e-639421d2d950}"]).subscribe(update => {
+        logMessage('Single Storage Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getUserUpdates().subscribe(update => {
+        logMessage('All User Update')
+        logMessage(update)
+    })
+
+    systemBusManager.stateReducer.getUserUpdates(["{329a88b1-df06-2871-5cde-15a50be17743}"]).subscribe(update => {
+        logMessage('Single User Update')
+        logMessage(update)
+    })
+}
+
+document.querySelector('button#connect')?.addEventListener('click', connect)

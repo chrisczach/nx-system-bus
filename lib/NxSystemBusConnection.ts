@@ -76,6 +76,12 @@ export class NxSystemBusConnection {
 
             try {
                 const response = await fetch(`https://${this.#mediaServerUrl}/ec2/transactionBus/http${this.#auth ? '?auth=' + this.#auth : ''}`, { signal: controller.signal });
+
+                if (!response.body) {
+                    connection.next({ command: 'error', params: { message: reconnect ? 'Connection to system bus lost' : 'Unable to connect to system bus.' } });
+                    return
+                }
+
                 reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
 
                 if (response.status === 200) {
@@ -95,7 +101,7 @@ export class NxSystemBusConnection {
                         break;
                     }
                     value.split('\r\n')
-                        .filter(entry => entry[0] === '{')
+                        .filter((entry: '') => entry[0] === '{')
                         .map((data: string) => {
                             try {
                                 return JSON.parse(data);

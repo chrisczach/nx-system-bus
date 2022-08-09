@@ -3,10 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <link rel="stylesheet" href="./index.css">
+    <title>Nx System Bus Example</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="wrapper">
+      <h1>Nx System Bus Example</h1>
+      <form>
+        <label for="url">Mediaserver Url</label>
+        <input type="text" id="url" name="url" placeholder="Either IP address or proxy address for server">
+        <label for="auth">Auth Key</label>
+        <input type="text" id="auth" name="auth" placeholder="Authentication key used for connection">
+        <button id="connect" type="submit">Connect to System Bus</button>
+      </form>
+      <h2>State Updates</h2>
+      <pre></pre>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
