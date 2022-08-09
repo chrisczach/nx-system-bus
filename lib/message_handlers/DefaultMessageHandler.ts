@@ -13,9 +13,9 @@ export class DefaultMessageHandler {
         handler(params);
     }
 
-    #fallbackHandler = (command: string, ignored = false) => (params: unknown) => {
-        const log = ignored ? console.warn : console.error
-        log(`${ignored ? 'Ignored command' : 'Unhandled command'}: ${command}`);
+    #fallbackHandler = (command: string, needToImplement = false) => (params: unknown) => {
+        const log = needToImplement ? console.warn : console.error
+        log(`${needToImplement ? 'Need to implement' : 'Unhandled command'}: ${command}`);
         log(params);
     };
 
