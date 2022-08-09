@@ -10,11 +10,15 @@
     <div id="wrapper">
       <h1>Nx System Bus Example</h1>
       <form>
-        <label for="url">Mediaserver Url</label>
-        <input type="text" id="url" name="url" placeholder="Either IP address or proxy address for server">
-        <label for="auth">Auth Key</label>
-        <input type="text" id="auth" name="auth" placeholder="Authentication key used for connection">
-        <button id="connect" type="submit">Connect to System Bus</button>
+        <div class="input-group">
+          <label for="url">Mediaserver Url</label>
+          <input type="text" id="url" name="url" placeholder="Either IP address or proxy address for server">
+          <label for="auth">Auth Key</label>
+          <input type="text" id="auth" name="auth" placeholder="Authentication key used for connection">
+        </div>
+        <div class="input-group">
+          <button id="connect" type="submit">Connect to System Bus</button>
+        </div>
       </form>
       <h2>State Updates</h2>
       <pre></pre>

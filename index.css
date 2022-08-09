@@ -23,10 +23,15 @@ input {
 }
 
 form {
+    width: 100%;
+}
+
+.input-group {
     display: flex;
     justify-content: stretch;
     align-items: stretch;
     width: 100%;
+    padding-bottom: 8px;
 }
 
 pre {

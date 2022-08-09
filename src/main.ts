@@ -26,8 +26,9 @@ const logMessage = (message: string | Partial<StateResult>) => {
     }
 }
 
-const connect = (e: Event) => {
-    e.preventDefault()
+const connect = (e?: Event) => {
+    e?.preventDefault()
+    const queryParams = new URLSearchParams(window.location.search);
 
     if (systemBusManager) {
         logMessage('Canceling existing system bus connection')
@@ -48,6 +49,9 @@ const connect = (e: Event) => {
     if (!auth || !serverUrl) {
         alert('Please make sure to enter both the url and auth to run demo')
     }
+
+    queryParams.set('url', serverUrl)
+    queryParams.set('auth', auth)
 
     systemBusManager = new NxSystemBusManager(false, serverUrl, auth)
 
@@ -105,6 +109,29 @@ const connect = (e: Event) => {
         logMessage('Single Resource Status Update')
         logMessage(update)
     })
+}
+
+const queryParams = new URLSearchParams(window.location.search);
+
+const url= queryParams.get('url')
+const auth = queryParams.get('auth')
+
+if (url) {
+    const urlInput = document.querySelector<HTMLInputElement>('input#url')
+    if (urlInput) {
+        urlInput.value = url;
+    }
+}
+
+if (auth) {
+    const authInput = document.querySelector<HTMLInputElement>('input#auth')
+    if (authInput) {
+        authInput.value = auth;
+    }
+}
+
+if (auth && url) {
+    connect()
 }
 
 document.querySelector('button#connect')?.addEventListener('click', connect)

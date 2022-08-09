@@ -22,6 +22,9 @@ export class SystemState {
     vmsRules: unknown[] = [];
     webPages: GenericResource[] = [];
 }
+export interface IdData {
+    id: string
+}
 export interface ResourceParam {
     name: string;
     resourceId: string;

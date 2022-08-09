@@ -1,5 +1,6 @@
-import { CameraUserAttributes, Message, ResourceParam, ResourceStatus } from "../types";
+import { CameraUserAttributes, IdData, Message, ResourceParam, ResourceStatus, ServersUserAttributes } from "../types";
 import { NxSystemState } from "../system_state/NxSystemState";
+import { uniqWith, isEqual } from "lodash-es";
 
 
 export class DefaultMessageHandler {
@@ -12,9 +13,10 @@ export class DefaultMessageHandler {
         handler(params);
     }
 
-    #fallbackHandler = (command: string) => (params: unknown) => {
-        console.info(`Unhandled command: ${command}`);
-        console.info(params);
+    #fallbackHandler = (command: string, ignored = false) => (params: unknown) => {
+        const log = ignored ? console.warn : console.error
+        log(`${ignored ? 'Ignored command' : 'Unhandled command'}: ${command}`);
+        log(params);
     };
 
     // Message Handlers
@@ -22,6 +24,16 @@ export class DefaultMessageHandler {
         Object.assign(this.#state, params);
         this.#state.report('system');
     };
+
+    removeResource = (params: IdData) => {
+        // Need to implement
+        console.log(params)
+    }
+
+    removeResourceParam = (params: ResourceParam) => {
+        this.#state.allProperties = this.#state.allProperties.filter(({ resourceId }) => resourceId !== params.resourceId);
+        this.#state.report(params.resourceId);
+    }
 
     setResourceParam = (params: ResourceParam) => {
         const paramIndex = this.#state.allProperties.findIndex(({ resourceId, name }) => resourceId === params.resourceId && name === params.name);
@@ -33,17 +45,13 @@ export class DefaultMessageHandler {
         this.#state.report(params.resourceId);
     };
 
-    runtimeInfoChanged = () => {
-        // Don't think this is useful.
-    };
+    setResourceParams = (params: ResourceParam[]) => {
+        params.forEach(param => this.setResourceParam(param))
+    }
 
-    runtimeInfoRemoved = () => {
-        // Don't think this is useful.
-    };
-
-    discoveredServersList = () => {
-        // Don't think this is useful.
-    };
+    runtimeInfoChanged = this.#fallbackHandler('runtimeInfoChanged', true)
+    runtimeInfoRemoved = this.#fallbackHandler('runtimeInfoRemoved', true)
+    discoveredServersList = this.#fallbackHandler('discoveredServersList', true)
 
     saveCameraUserAttributes = (params: CameraUserAttributes) => {
         const paramIndex = this.#state.cameraUserAttributesList.findIndex(({ cameraId }) => cameraId === params.cameraId);
@@ -53,6 +61,22 @@ export class DefaultMessageHandler {
             this.#state.cameraUserAttributesList[paramIndex] = params;
         }
         this.#state.report(params.cameraId);
+    }
+
+    saveServerUserAttributes = (params: ServersUserAttributes) => {
+        const paramIndex = this.#state.serversUserAttributesList.findIndex(({ serverId }) => serverId === params.serverId);
+        if (paramIndex === -1) {
+            this.#state.serversUserAttributesList.push(params);
+        } else {
+            this.#state.serversUserAttributesList[paramIndex] = params;
+        }
+        this.#state.report(params.serverId);
+    }
+
+    removeResourceStatus = (params: IdData) => {
+        this.#state.resStatusList = this.#state.resStatusList.filter(({ id }) => id !== params.id);
+        this.#state.report(params.id);
+        this.#state.report(`status-${params.id}`);
     }
 
     setResourceStatus = (params: ResourceStatus) => {
