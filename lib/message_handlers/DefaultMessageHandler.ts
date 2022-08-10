@@ -1,4 +1,4 @@
-import { BroadcastAction, CameraUserAttributes, IdData, Message, ResourceParam, ResourceStatus, ServersUserAttributes } from "../types";
+import { CameraUserAttributes, IdData, Message, ResourceParam, ResourceStatus, ServersUserAttributes } from "../types";
 import { NxSystemState } from "../system_state/NxSystemState";
 import { DefaultBroadcastHandler } from "../broadcast_handlers/DefaultBroadcastHandler";
 

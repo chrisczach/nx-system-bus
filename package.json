@@ -1,13 +1,13 @@
 {
   "name": "nx-system-bus",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.1.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "export MODE=library && tsc && vite build",
     "deploy": "export MODE=deploy && npm run build",
-    "prepublish": "npm run build",
+    "prepublish": "export MODE=library && tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
