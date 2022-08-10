@@ -58,8 +58,10 @@ const connect = (e?: Event) => {
 
     systemBusManager = new NxSystemBusManager(false, serverUrl, auth)
 
-    systemBusManager.stateReducer.getAllUpdates().subscribe(update => {
-        logMessage('All System Update')
+    const showing = selectedResources.length ? 'Selected' : 'All'
+
+    systemBusManager.stateReducer.getAllUpdates(selectedResources).subscribe(update => {
+        logMessage(`${showing} System Update`)
         logMessage(update)
     })
 
@@ -72,27 +74,27 @@ const connect = (e?: Event) => {
     }
 
     systemBusManager.stateReducer.getCameraUpdates(selectedResources).subscribe(update => {
-        logMessage('Selected Camera Update')
+        logMessage(`${showing} Camera Update`)
         logMessage(update)
     })
 
     systemBusManager.stateReducer.getServerUpdates(selectedResources).subscribe(update => {
-        logMessage('Selected Server Update')
+        logMessage(`${showing} Server Update`)
         logMessage(update)
     })
 
     systemBusManager.stateReducer.getStorageUpdates(selectedResources).subscribe(update => {
-        logMessage('Selected Storage Update')
+        logMessage(`${showing} Storage Update`)
         logMessage(update)
     })
 
     systemBusManager.stateReducer.getUserUpdates(selectedResources).subscribe(update => {
-        logMessage('Selected User Update')
+        logMessage(`${showing} User Update`)
         logMessage(update)
     })
 
     systemBusManager.stateReducer.getResourceStatusUpdates(selectedResources).subscribe(update => {
-        logMessage('Selected Resource Status Update')
+        logMessage(`${showing} Resource Status Update`)
         logMessage(update)
     })
 }

@@ -10,8 +10,11 @@ export class NxSystemState extends SystemState {
         shareReplay(1)
     );
 
-    report(resourceId: string) {
+    report(resourceId: string, prepend = '') {
         this.#updater$.next(resourceId);
+        if(prepend) {
+            this.#updater$.next(`${prepend}-${resourceId}`)
+        }
     }
 
     getState(updates: string[]): StateResult;
@@ -19,20 +22,20 @@ export class NxSystemState extends SystemState {
     getState(updates: string[], property: string, includeIds: string[]): StateResult;
     getState(updates: string[], property: string, includeIds: string[], idProperty: string): StateResult;
     getState(updates: string[], property: string = '', includeIds: string[] = [], idProperty = 'id'): StateResult {
-        const value = property ? pick(this, property) : this;
+        const value = property ? pick(this, property) : omit(this, 'updateNotifier$', '#updater#');
+        const idsFound: string[] = []
 
-        if (includeIds.length) {
-            const properties = property ? [property] : Object.keys(value);
-            for (const propertyKey of properties) {
-                // @ts-expect-error
-                value[propertyKey] = value[propertyKey].filter(item => !item[idProperty] || includeIds.includes(item[idProperty]));
-
-            }
+        for (const propertyKey of Object.keys(value)) {
+            // @ts-expect-error
+            const items = value[propertyKey] = includeIds.length ? value[propertyKey].filter(item => item[idProperty] && includeIds.includes(item[idProperty])) : value[propertyKey];
+            items.forEach((item: { [x: string]: any; }) => idsFound.push(item[idProperty]))
         }
+
+        updates = updates.map(id => id.replace(`${property}-`, '')).filter(updated => idsFound.includes(updated))
 
         return {
             updates: includeIds.length ? updates.filter(id => includeIds.includes(id)) : updates,
-            state: cloneDeep(omit(value, ['updateNotifier$']))
+            state: cloneDeep(value)
         };
     }
 }

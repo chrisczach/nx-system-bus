@@ -17,23 +17,22 @@ export class DefaultStateReducer extends BaseStateReducer {
     /**
      * Reducer factories
      */
-    #baseReducerFactory = (targetProperty = '', withState = true, includeIds: string[] = [], prepend = '', idProperty = 'id') => {
-        includeIds = prepend ? includeIds.map(id => `${prepend}-${id}`) : includeIds;
-
+    #baseReducerFactory = (targetProperty = '', includeIds: string[] = [], prepend = false, idProperty = 'id') => {
+        const prependIds = prepend ? includeIds.map(id => `${targetProperty}-${id}`) : includeIds
         return this.#updateBuffer$.pipe(
-            map(updates => includeIds.length ? updates.filter(id => includeIds.includes(id)) : prepend ? updates.filter(id => id.startsWith(prepend)) : updates),
+            map(updates => prependIds.length ? updates.filter(id => prependIds.includes(id)) : updates),
             filter(updates => !!updates.length),
-            map(updates => withState ? this.state.getState(updates, targetProperty, includeIds, idProperty) : { updates }),
+            map(updates => this.state.getState(updates, targetProperty, includeIds, idProperty)),
             filter(res => !!res.updates.length)
         );
     }
 
-    #propertyReducerFactory = (targetProperty: string, prepend = '') => (includeIds: string[] = [], withState = true) => this.#baseReducerFactory(targetProperty, withState, includeIds, prepend);
+    #propertyReducerFactory = (targetProperty: string, prepend = false) => (includeIds: string[] = []) => this.#baseReducerFactory(targetProperty, includeIds, prepend);
 
     /**
      * Reducers
     */
-    getAllUpdates = (withState = true) => this.#baseReducerFactory('', withState);
+    getAllUpdates = this.#propertyReducerFactory('')
 
     getCameraUpdates = this.#propertyReducerFactory('cameras');
 
@@ -43,7 +42,7 @@ export class DefaultStateReducer extends BaseStateReducer {
 
     getUserUpdates = this.#propertyReducerFactory('users');
 
-    getResourceStatusUpdates = this.#propertyReducerFactory('resStatusList', 'status');
+    getResourceStatusUpdates = this.#propertyReducerFactory('resStatusList', true);
 
     constructor(state: NxSystemState, config = DefaultStateReducer.DEFAULT_CONFIG) {
         super(state);

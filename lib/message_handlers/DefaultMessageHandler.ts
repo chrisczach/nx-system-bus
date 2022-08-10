@@ -74,8 +74,7 @@ export class DefaultMessageHandler {
 
     removeResourceStatus = (params: IdData) => {
         this.#state.resStatusList = this.#state.resStatusList.filter(({ id }) => id !== params.id);
-        this.#state.report(params.id);
-        this.#state.report(`status-${params.id}`);
+        this.#state.report(params.id, 'resStatusList');
     }
 
     setResourceStatus = (params: ResourceStatus) => {
@@ -85,8 +84,7 @@ export class DefaultMessageHandler {
         } else {
             this.#state.resStatusList[paramIndex] = params;
         }
-        this.#state.report(params.id);
-        this.#state.report(`status-${params.id}`);
+        this.#state.report(params.id, 'resStatusList');
     };
 
     constructor(state: NxSystemState) {
