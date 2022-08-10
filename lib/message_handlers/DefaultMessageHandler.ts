@@ -1,6 +1,5 @@
 import { CameraUserAttributes, IdData, Message, ResourceParam, ResourceStatus, ServersUserAttributes } from "../types";
 import { NxSystemState } from "../system_state/NxSystemState";
-import { uniqWith, isEqual } from "lodash-es";
 
 
 export class DefaultMessageHandler {
