@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "export MODE=library && tsc && vite build",
-    "deploy": "export MODE=deploy && npm run build",
-    "prepublish": "export MODE=library && tsc && vite build",
+    "deploy": "export MODE=deploy && tsc && vite build",
+    "prepublish": "export MODE=publish && tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
