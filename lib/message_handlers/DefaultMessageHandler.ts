@@ -13,6 +13,8 @@ export class DefaultMessageHandler {
         handler(params);
     }
 
+    #parseParams = <T = unknown>(params: unknown): T => typeof params === 'string' ? JSON.parse(atob(params)): params
+
     #fallbackHandler = <T = unknown>(command: string, needToImplement = false) => (params: T) => {
         const log = needToImplement ? console.warn : console.error
         log(`${needToImplement ? 'Need to implement' : 'Unhandled command'}: ${command}`);
@@ -88,7 +90,7 @@ export class DefaultMessageHandler {
         this.#state.report(params.id, 'resStatusList');
     };
 
-    broadcastAction = (params: Record<string, unknown>) => this.broadcastHandler.report({command: 'broadcastAction', params})
+    broadcastAction = ({ params, runtimeParams, ...props}: Record<string, unknown>) => this.broadcastHandler.report({command: 'broadcastAction', params: {...props, params: this.#parseParams(params), runtimeParams: this.#parseParams(runtimeParams)}})
 
     constructor(state: NxSystemState, private broadcastHandler: DefaultBroadcastHandler) {
         this.#state = state;
