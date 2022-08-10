@@ -1,4 +1,4 @@
-import { bufferTime, distinctUntilChanged, filter, map, Observable } from "rxjs";
+import { bufferTime, distinctUntilChanged, filter, map, Observable, startWith } from "rxjs";
 import { uniqWith, isEqual } from 'lodash-es';
 import { NxSystemState } from "../system_state/NxSystemState";
 import { BaseStateReducer } from "./BaseStateReducer";
@@ -24,7 +24,8 @@ export class DefaultStateReducer extends BaseStateReducer {
             filter(updates => !!updates.length),
             map(updates => this.state.getState(updates, targetProperty, includeIds, idProperty)),
             filter(res => !!res.updates.length),
-            distinctUntilChanged(isEqual)
+            distinctUntilChanged(isEqual),
+            startWith(this.state.getState(includeIds, targetProperty, includeIds, idProperty))
         );
     }
 

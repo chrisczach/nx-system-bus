@@ -4,6 +4,7 @@ export interface Message {
 }
 
 export interface StateResult {
+    initial: boolean;
     updates: string[];
     state: unknown;
 }

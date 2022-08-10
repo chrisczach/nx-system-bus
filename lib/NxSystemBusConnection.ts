@@ -136,7 +136,7 @@ export class NxSystemBusConnection {
                 console.error(e);
             }
             active = false;
-            return reader.cancel();
+            return reader?.cancel();
         };
 
         return { connection, disconnect };

@@ -21,17 +21,22 @@ export class NxSystemState extends SystemState {
     getState(updates: string[], property: string = '', includeIds: string[] = [], idProperty = 'id'): StateResult {
         const value = property ? pick(this, property) : omit(this, 'updateNotifier$', '#updater#');
         const idsFound: string[] = []
+        const initial = !updates.filter(id => id !== 'system').length
 
         for (const propertyKey of Object.keys(value)) {
             // @ts-expect-error
-            const items = value[propertyKey] = includeIds.length ? value[propertyKey].filter(item => item[idProperty] && includeIds.includes(item[idProperty]) && updates.includes(item[idProperty])) : value[propertyKey];
-            items.forEach((item: { [x: string]: any; }) => idsFound.push(item[idProperty]))
+            const items = value[propertyKey] = includeIds.length && !initial ? value[propertyKey].filter(item => item[idProperty] && initial || includeIds.includes(item[idProperty]) && updates.includes(item[idProperty])) : value[propertyKey];
+            items.forEach((item: Record<string, string>) => {
+                if (item[idProperty]) {
+                    idsFound.push(item[idProperty])
+                }
+            })
         }
-
         updates = updates.map(id => id.replace(`${property}-`, '')).filter(updated => idsFound.includes(updated))
 
         return {
-            updates: includeIds.length ? updates.filter(id => includeIds.includes(id)) : updates,
+            initial,
+            updates: initial ? idsFound : includeIds.length ? updates.filter(id => includeIds.includes(id)) : updates,
             state: cloneDeep(value)
         };
     }
