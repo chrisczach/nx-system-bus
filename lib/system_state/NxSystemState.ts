@@ -11,10 +11,7 @@ export class NxSystemState extends SystemState {
     );
 
     report(resourceId: string, prepend = '') {
-        this.#updater$.next(resourceId);
-        if(prepend) {
-            this.#updater$.next(`${prepend}-${resourceId}`)
-        }
+        this.#updater$.next(prepend ? `${prepend}-${resourceId}` : resourceId);
     }
 
     getState(updates: string[]): StateResult;
@@ -27,7 +24,7 @@ export class NxSystemState extends SystemState {
 
         for (const propertyKey of Object.keys(value)) {
             // @ts-expect-error
-            const items = value[propertyKey] = includeIds.length ? value[propertyKey].filter(item => item[idProperty] && includeIds.includes(item[idProperty])) : value[propertyKey];
+            const items = value[propertyKey] = includeIds.length ? value[propertyKey].filter(item => item[idProperty] && includeIds.includes(item[idProperty]) && updates.includes(item[idProperty])) : value[propertyKey];
             items.forEach((item: { [x: string]: any; }) => idsFound.push(item[idProperty]))
         }
 

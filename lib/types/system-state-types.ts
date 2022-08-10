@@ -22,6 +22,16 @@ export class SystemState {
     vmsRules: unknown[] = [];
     webPages: GenericResource[] = [];
 }
+export interface BroadcastAction {
+    actionType: string;
+    aggregatinCount: number;
+    params: string;
+    receivedFromRemoteHost: boolean;
+    resourceIds: string[];
+    ruleId: string;
+    runtimeParams: string;
+    toggleState: string;
+}
 export interface IdData {
     id: string
 }

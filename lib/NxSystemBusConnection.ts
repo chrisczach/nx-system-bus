@@ -100,7 +100,7 @@ export class NxSystemBusConnection {
                         }
                         break;
                     }
-                    value.split('\r\n')
+                    (value || '').split('\r\n')
                         .filter((entry: '') => entry[0] === '{')
                         .map((data: string) => {
                             try {

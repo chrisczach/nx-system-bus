@@ -10,7 +10,7 @@ const logMessage = (message: string | Partial<StateResult>) => {
 
     if (typeof message !== 'string') {
         const state = 'View browser developer console to see logged state'
-        message = JSON.stringify({ ...message, state }, null, 4);
+        message = JSON.stringify(message.state ? { ...message, state } : message, null, 4);
     } else {
         message = `<strong>${message}<strong>`
     }
@@ -60,11 +60,6 @@ const connect = (e?: Event) => {
 
     const showing = selectedResources.length ? 'Selected' : 'All'
 
-    systemBusManager.stateReducer.getAllUpdates(selectedResources).subscribe(update => {
-        logMessage(`${showing} System Update`)
-        logMessage(update)
-    })
-
     if (selectedResources.length) {
         logMessage("Showing filtered updates, to demo all updates remove resourceId's and reconnect.")
         logMessage("Resouce Id's:")
@@ -73,29 +68,24 @@ const connect = (e?: Event) => {
         logMessage("Showing all updates, to demo filtered updates add resrouceId's to include and reconnect.")
     }
 
-    systemBusManager.stateReducer.getCameraUpdates(selectedResources).subscribe(update => {
-        logMessage(`${showing} Camera Update`)
-        logMessage(update)
-    })
+    const systemStateToObserve = {
+        getAllUpdates: 'System Update',
+        getCameraUpdates: 'Camera Update',
+        getServerUpdates: 'Server Update',
+        getStorageUpdates: 'Storage Update',
+        getUserUpdates: 'User Update',
+        getResourceStatusUpdates: 'Resource Status Update'
+    }
 
-    systemBusManager.stateReducer.getServerUpdates(selectedResources).subscribe(update => {
-        logMessage(`${showing} Server Update`)
+    // @ts-expect-error
+    Object.entries(systemStateToObserve).forEach(([reducer, message]) => systemBusManager.stateReducer[reducer](selectedResources).subscribe(update => {
+        logMessage(`${showing} ${message}`)
         logMessage(update)
-    })
+    }))
 
-    systemBusManager.stateReducer.getStorageUpdates(selectedResources).subscribe(update => {
-        logMessage(`${showing} Storage Update`)
-        logMessage(update)
-    })
-
-    systemBusManager.stateReducer.getUserUpdates(selectedResources).subscribe(update => {
-        logMessage(`${showing} User Update`)
-        logMessage(update)
-    })
-
-    systemBusManager.stateReducer.getResourceStatusUpdates(selectedResources).subscribe(update => {
-        logMessage(`${showing} Resource Status Update`)
-        logMessage(update)
+    systemBusManager.broadcast.messages.subscribe(({command, params}) => {
+        logMessage(`Broadcast Event: ${command}`)
+        logMessage(params)
     })
 }
 

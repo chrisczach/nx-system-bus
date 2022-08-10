@@ -1,5 +1,6 @@
-import { CameraUserAttributes, IdData, Message, ResourceParam, ResourceStatus, ServersUserAttributes } from "../types";
+import { BroadcastAction, CameraUserAttributes, IdData, Message, ResourceParam, ResourceStatus, ServersUserAttributes } from "../types";
 import { NxSystemState } from "../system_state/NxSystemState";
+import { DefaultBroadcastHandler } from "../broadcast_handlers/DefaultBroadcastHandler";
 
 
 export class DefaultMessageHandler {
@@ -12,7 +13,7 @@ export class DefaultMessageHandler {
         handler(params);
     }
 
-    #fallbackHandler = (command: string, needToImplement = false) => (params: unknown) => {
+    #fallbackHandler = <T = unknown>(command: string, needToImplement = false) => (params: T) => {
         const log = needToImplement ? console.warn : console.error
         log(`${needToImplement ? 'Need to implement' : 'Unhandled command'}: ${command}`);
         log(params);
@@ -87,7 +88,9 @@ export class DefaultMessageHandler {
         this.#state.report(params.id, 'resStatusList');
     };
 
-    constructor(state: NxSystemState) {
+    broadcastAction = (params: Record<string, unknown>) => this.broadcastHandler.report({command: 'broadcastAction', params})
+
+    constructor(state: NxSystemState, private broadcastHandler: DefaultBroadcastHandler) {
         this.#state = state;
     }
 }

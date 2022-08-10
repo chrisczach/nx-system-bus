@@ -3,12 +3,14 @@ import { Message } from "./types";
 import { DefaultStateReducer } from "./state_reducers/DefaultStateReducer";
 import { DefaultMessageHandler } from "./message_handlers/DefaultMessageHandler";
 import { NxSystemState } from "./system_state/NxSystemState";
+import { DefaultBroadcastHandler } from "./broadcast_handlers/DefaultBroadcastHandler";
 
 const DISCONNECT_FALLBACK = () => console.info('Not connected to system bus')
 
 export class NxSystemBusManager {
     disconnect = DISCONNECT_FALLBACK
     state: NxSystemState;
+    broadcast: DefaultBroadcastHandler;
     #messageHandler: DefaultMessageHandler;
     stateReducer
 
@@ -16,7 +18,8 @@ export class NxSystemBusManager {
     constructor(useWebsocket: boolean, mediaServerUrl: string, auth: string)
     constructor(useWebsocket: boolean, mediaServerUrl: string, authOrUsername: string, password?: string, stateReducerFactory = DefaultStateReducer.createFactory()) {
         this.state = new NxSystemState()
-        this.#messageHandler = new DefaultMessageHandler(this.state);
+        this.broadcast = new DefaultBroadcastHandler()
+        this.#messageHandler = new DefaultMessageHandler(this.state, this.broadcast);
         this.stateReducer = stateReducerFactory(this.state)
 
         console.info(`Connecting to system bus on ${mediaServerUrl}`)
